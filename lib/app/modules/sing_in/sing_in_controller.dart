@@ -32,7 +32,6 @@ class SingInController extends GetxController {
           isLoading.value = true;
 
           var response = await ApiServices.login(userModel.value);
-          isLoading.value = false;
 
           final decode = jsonDecode(response.body);
           if (response.statusCode != 200) {
@@ -40,6 +39,8 @@ class SingInController extends GetxController {
           } else {
             await SharedServices.setData(
                 SetType.string, 'token', decode['token']);
+
+            isLoading.value = false;
 
             Get.offAllNamed(HomeRoutes.home);
             Get.snackbar("Success", "Login successfully");

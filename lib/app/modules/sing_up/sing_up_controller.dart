@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:telechat/app/data/services/api_services.dart';
@@ -19,19 +18,8 @@ class SingUpController extends GetxController {
   String? images;
 
   var userModel = UserModel().obs;
+  var selectDate = DateTime.now().obs;
   RxBool isLoading = RxBool(false);
-
-  cameraPickImage() async {
-    final pickedImage = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-
-    if (pickedImage != null) {
-      selectedImage.value = File(pickedImage.path);
-      update();
-      userModel.value.profileImage = selectedImage.value.path;
-    }
-  }
 
   galleryPickImage() async {
     final pickedImage = await ImagePicker().pickImage(
@@ -40,9 +28,11 @@ class SingUpController extends GetxController {
 
     if (pickedImage != null) {
       selectedImage.value = File(pickedImage.path);
-      update();
+
       userModel.value.profileImage = selectedImage.value.path;
     }
+
+    update();
   }
 
   setPasswordValidator() {
@@ -53,31 +43,57 @@ class SingUpController extends GetxController {
     Get.toNamed(SingInRoutes.singIn);
   }
 
+  chooseDate() async {
+    final date = await showDatePicker(
+      context: Get.context!,
+      initialDate: selectDate.value,
+      firstDate: DateTime(1950),
+      lastDate: DateTime.now(),
+    );
+    if (date != null && date != selectDate.value) {
+      selectDate.value = date;
+
+      userModel.value.dateOfBirth =
+          selectDate.value.toString().substring(0, 10);
+    }
+
+    update();
+  }
+
   register() async {
     if (forky.currentState!.validate()) {
-      if (userModel.value.password!.length >= 6) {
-        try {
-          isLoading.value = true;
+      if (userModel.value.profileImage != null) {
+        if (userModel.value.dateOfBirth != null) {
+          if (userModel.value.password!.length >= 6) {
+            try {
+              isLoading.value = true;
 
-          final response = await ApiServices.register(userModel.value);
-          isLoading.value = false;
+              final response = await ApiServices.register(userModel.value);
 
-          if (response.statusCode != 200) {
-            Get.snackbar("Error", "Something went wrong");
-            return;
+              if (response.statusCode != 200) {
+                Get.snackbar("Error", "Something went wrong");
+                return;
+              }
+              final decoded = jsonDecode(await response.stream.bytesToString());
+
+              await SharedServices.setData(
+                  SetType.string, 'token', decoded['token']);
+              isLoading.value = false;
+              Get.offNamed(HomeRoutes.home);
+              Get.snackbar("Success", "Registered successfully");
+            } catch (e) {
+              Get.snackbar("Error", e.toString());
+              isLoading.value = false;
+            }
+          } else {
+            Get.snackbar(
+                "Error", "Password must be at least 6 characters or more");
           }
-          final decoded = jsonDecode(await response.stream.bytesToString());
-
-          await SharedServices.setData(
-              SetType.string, 'token', decoded['token']);
-          Get.offNamed(HomeRoutes.home);
-          Get.snackbar("Success", "Registered successfully");
-        } catch (e) {
-          Get.snackbar("Error", e.toString());
-          isLoading.value = false;
+        } else {
+          Get.snackbar("Error", "Please choose date of birth");
         }
       } else {
-        Get.snackbar("Error", "Password must be at least 6 characters or more");
+        Get.snackbar("Error", "Please choose profile image");
       }
     } else {
       Get.snackbar("Error", "Fill all the fields");
