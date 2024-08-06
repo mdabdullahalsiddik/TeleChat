@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Tele Chat',
+      title: 'Dratting App',
       theme: const MaterialTheme(TextTheme()).light(),
       darkTheme: const MaterialTheme(TextTheme()).dark(),
       initialBinding: ApplicationBindings(),

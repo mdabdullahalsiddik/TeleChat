@@ -48,4 +48,26 @@ class ApiServices {
       },
     );
   }
+
+  static Future<http.Response> messages(String id) async {
+    return await http.get(
+      Uri.parse('${ApiEndpoints.messages}/$id'),
+      headers: {
+        "Accept": "application/json",
+        "Authorization": await authToken(),
+      },
+    );
+  }
+
+  static Future<http.Response> sendMessages(
+      String receiverId, String message) async {
+    return await http.post(ApiEndpoints.sendMessages, headers: {
+      "Accept": "application/json",
+      "Authorization": await authToken(),
+    }, body: {
+      "receiver_id": receiverId,
+      "message": message,
+      "type": "text"
+    });
+  }
 }

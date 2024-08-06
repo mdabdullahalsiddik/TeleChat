@@ -2,6 +2,7 @@ import 'home_routes.dart';
 import 'sing_in_routes.dart';
 import 'sing_up_routes.dart';
 import 'splash_routes.dart';
+import 'message_routes.dart';
 
 
 class AppPages {
@@ -16,5 +17,6 @@ class AppPages {
 		...SingUpRoutes.routes,
 		...SplashRoutes.routes,
 		
+		...MessageRoutes.routes,
   ];
 }

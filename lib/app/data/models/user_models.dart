@@ -1,4 +1,5 @@
 class UserModel {
+  
   String? name;
   String? email;
   String? phone;
@@ -7,6 +8,7 @@ class UserModel {
 
   String? profileImage;
   UserModel({
+
     this.name,
     this.email,
     this.phone,
@@ -16,6 +18,7 @@ class UserModel {
   });
 
   Map<String, dynamic> toRegister() => {
+      
         'name': name,
         'email': email,
         'phone': phone,

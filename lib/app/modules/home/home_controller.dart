@@ -7,6 +7,9 @@ import 'package:telechat/app/routes/sing_in_routes.dart';
 class HomeController extends GetxController {
   var users = <UsersModel>[].obs;
   RxBool isLoading = false.obs;
+
+  //var searchList = <UsersModel>[].obs;
+ // var finalSearchList = <UsersModel>[].obs;
   @override
   void onInit() {
     super.onInit();
@@ -34,4 +37,16 @@ class HomeController extends GetxController {
 
     update();
   }
+
+  // void searchData(String value) {
+  //   value.isEmpty || value == ""
+  //       ? searchList.value = finalSearchList
+  //       : searchList.value = finalSearchList
+  //           .where(
+  //             (element) => element.name.toString().toLowerCase().contains(
+  //                   value.toLowerCase(),
+  //                 ),
+  //           )
+  //           .toList();
+  // }
 }
